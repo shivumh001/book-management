@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard — Book Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar-lib">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a href="{{ url_for('home') }}" class="brand">📚 BOOK MANAGEMENT</a>
+        <div class="d-flex gap-1">
+            <a href="{{ url_for('home') }}" class="nav-link-lib">Home</a>
+            <a href="{{ url_for('add_books') }}" class="nav-link-lib">Add Book</a>
+            <a href="{{ url_for('dashboard') }}" class="nav-link-lib active">Dashboard</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container pb-5">
+
+    <h1 class="h2 mb-4">Dashboard</h1>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card text-center p-3">
+                <div class="display-6">{{ total_books }}</div>
+                <div class="text-muted small">Total Books</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card accent-gold text-center p-3">
+                <div class="display-6">₹{{ total_value }}</div>
+                <div class="text-muted small">Total Inventory Value</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card accent-teal-light text-center p-3">
+                <div class="display-6">₹{{ avg_price }}</div>
+                <div class="text-muted small">Average Price</div>
+            </div>
+        </div>
+    </div>
+
+    {% if category_labels|length == 0 %}
+        <div class="alert alert-secondary">No data yet — add some books to see charts.</div>
+    {% else %}
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h2 class="h6">Books per Category</h2>
+                    <canvas id="countChart" height="220"></canvas>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-3">
+                    <h2 class="h6">Inventory Value per Category</h2>
+                    <canvas id="valueChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="d-flex justify-content-center mt-4">
+        <div id="spinner3d" style="width: 60px; height: 60px;"></div>
+    </div>
+
+</div>
+
+<!-- Chart data lives here, isolated from the JS below, so the <script>
+     block underneath is pure JavaScript with no Jinja syntax in it. -->
+<script id="chart-data" type="application/json">
+{{ {"labels": category_labels, "counts": category_counts, "values": category_values} | tojson }}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script>
+    const chartData = JSON.parse(document.getElementById('chart-data').textContent);
+
+    if (chartData.labels.length > 0) {
+        new Chart(document.getElementById('countChart'), {
+            type: 'bar',
+            data: { labels: chartData.labels, datasets: [{ label: 'Books', data: chartData.counts, backgroundColor: '#114B5F' }] },
+            options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+        });
+
+        new Chart(document.getElementById('valueChart'), {
+            type: 'doughnut',
+            data: { labels: chartData.labels, datasets: [{ data: chartData.values, backgroundColor: ['#114B5F','#1C6E8C','#E3B23C','#C79425','#3B8EA5','#0B3142','#F2C572','#6FA8B5','#8C6B1F'] }] },
+            options: { plugins: { legend: { position: 'bottom' } } }
+        });
+    }
+
+    // Minimal Three.js touch: one small rotating wireframe cube, no lights,
+    // no textures, no interaction — kept deliberately simple.
+    (function () {
+        const el = document.getElementById('spinner3d');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 10);
+        camera.position.z = 3;
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        renderer.setSize(60, 60);
+        el.appendChild(renderer.domElement);
+
+        const cube = new THREE.Mesh(
+            new THREE.BoxGeometry(1.4, 1.4, 1.4),
+            new THREE.MeshBasicMaterial({ color: 0xE3B23C, wireframe: true })
+        );
+        scene.add(cube);
+
+        function animate() {
+            requestAnimationFrame(animate);
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.015;
+            renderer.render(scene, camera);
+        }
+        animate();
+    })();
+</script>
+</body>
+</html>

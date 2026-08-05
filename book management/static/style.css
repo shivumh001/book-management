@@ -1,0 +1,181 @@
+/* ---------------------------------------------------------------------
+   Book Manager — design tokens
+   Palette: deep teal + brass/gold (bookshelf-and-binding feel)
+   Display face: Fraunces (serif, characterful) — headings only
+   Body face: Inter — everything else
+--------------------------------------------------------------------- */
+
+:root {
+    --ink: #1B262C;
+    --teal: #114B5F;
+    --teal-light: #1C6E8C;
+    --gold: #E3B23C;
+    --gold-dark: #C79425;
+    --cream: #FAF7F0;
+
+    /* re-point Bootstrap's own variables at our palette so btn-primary,
+       focus rings, etc. pick it up automatically */
+    --bs-primary: var(--teal);
+    --bs-primary-rgb: 17, 75, 95;
+    --bs-body-bg: var(--cream);
+    --bs-body-color: var(--ink);
+    --bs-border-radius: 0.75rem;
+    --bs-border-radius-lg: 1rem;
+    --bs-link-color: var(--teal);
+    --bs-link-hover-color: var(--teal-light);
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+h1, h2, h3, .brand {
+    font-family: 'Fraunces', Georgia, serif;
+}
+
+/* ---------------------------------- Navbar ---------------------------------- */
+
+.navbar-lib {
+    background: linear-gradient(90deg, var(--teal), var(--teal-light));
+    padding: 0.85rem 0;
+    margin-bottom: 2rem;
+}
+
+.navbar-lib .brand {
+    color: var(--cream);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.navbar-lib .nav-link-lib {
+    color: rgba(255, 255, 255, 0.85);
+    text-decoration: none;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-weight: 500;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.navbar-lib .nav-link-lib:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.navbar-lib .nav-link-lib.active {
+    background: var(--gold);
+    color: var(--ink);
+}
+
+/* ---------------------------------- Hero ---------------------------------- */
+
+.hero-lib {
+    background: radial-gradient(circle at top left, var(--teal-light), var(--teal) 65%);
+    color: var(--cream);
+    border-radius: var(--bs-border-radius-lg);
+    padding: 2.75rem 2.25rem;
+    margin-bottom: 2rem;
+}
+
+.hero-lib p {
+    color: rgba(250, 247, 240, 0.85);
+}
+
+/* ---------------------------------- Cards ---------------------------------- */
+
+.card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(17, 75, 95, 0.07);
+}
+
+.book-card {
+    border-radius: var(--bs-border-radius-lg);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    animation: fadeInUp 0.4s ease both;
+}
+
+.book-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(17, 75, 95, 0.16);
+}
+
+.stat-card {
+    border-radius: var(--bs-border-radius-lg);
+    border-top: 4px solid var(--teal);
+}
+
+.stat-card.accent-gold { border-top-color: var(--gold); }
+.stat-card.accent-teal-light { border-top-color: var(--teal-light); }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* ---------------------------------- Buttons ---------------------------------- */
+
+.btn {
+    border-radius: 999px;
+    font-weight: 600;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(17, 75, 95, 0.18);
+}
+
+.btn-gold {
+    background-color: var(--gold);
+    border-color: var(--gold);
+    color: var(--ink);
+}
+
+.btn-gold:hover {
+    background-color: var(--gold-dark);
+    border-color: var(--gold-dark);
+    color: var(--ink);
+}
+
+.btn-outline-cream {
+    border-color: rgba(250, 247, 240, 0.6);
+    color: var(--cream);
+}
+
+.btn-outline-cream:hover {
+    background-color: rgba(250, 247, 240, 0.15);
+    border-color: var(--cream);
+    color: #fff;
+}
+
+/* ---------------------------------- Forms ---------------------------------- */
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--teal-light);
+    box-shadow: 0 0 0 0.2rem rgba(17, 75, 95, 0.15);
+}
+
+/* ---------------------------------- Category badge ---------------------------------- */
+
+.badge-category {
+    background-color: var(--teal-light);
+    color: #fff;
+    font-weight: 500;
+    border-radius: 999px;
+    padding: 0.35em 0.85em;
+}
+
+.price-tag {
+    color: var(--gold-dark);
+    font-weight: 700;
+}
+
+/* ---------------------------------- Motion respect ---------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
